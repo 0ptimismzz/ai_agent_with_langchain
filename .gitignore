@@ -5,6 +5,10 @@ build/
 dist/
 wheels/
 *.egg-info
+app/mcp/common/config.py
+app/code_agent/chat_history
+app/bailian/config.py
 
 # Virtual environments
 .venv
+.temp
