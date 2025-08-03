@@ -8,6 +8,7 @@ wheels/
 app/mcp/common/config.py
 app/code_agent/chat_history
 app/bailian/config.py
+app/code_agent/model/config.py
 
 # Virtual environments
 .venv
