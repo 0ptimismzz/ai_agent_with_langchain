@@ -12,7 +12,7 @@ from app.code_agent.tools.shell_tools import get_stdio_shell_tools
 # 调用自己写的mcp工具
 async def run_agent():
 
-    memory = FileSaver(),
+    memory = FileSaver()
 
     shell_tools = await get_stdio_shell_tools()
     tools = file_tools + shell_tools
