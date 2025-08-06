@@ -9,7 +9,9 @@ app/mcp/common/config.py
 app/code_agent/chat_history
 app/bailian/config.py
 app/code_agent/model/config.py
+app/code_agent/rag/config.py
 
 # Virtual environments
 .venv
 .temp
+.env

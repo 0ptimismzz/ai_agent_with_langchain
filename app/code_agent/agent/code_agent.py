@@ -6,9 +6,12 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableConfig
 from langgraph.prebuilt import create_react_agent
 
+# from app.code_agent.model.config import WORKSPACE_ID, INDEX_ID
 from app.code_agent.model.qwen import llm_qwen
+from app.code_agent.rag.rag import create_client, retrieve_index, query_rag_from_bailian
 from app.code_agent.tools.file_saver import FileSaver
 from app.code_agent.tools.file_tools import file_tools
+from app.code_agent.tools.rag_tools import get_stdio_rag_tools
 from app.code_agent.tools.shell_tools import get_stdio_shell_tools
 from app.code_agent.tools.terminal_tools import get_stdio_terminal_tools
 
@@ -32,18 +35,13 @@ async def run_agent():
 
     # shell_tools = await get_stdio_shell_tools()
     terminal_tools = await get_stdio_terminal_tools()
-    tools = file_tools + terminal_tools
+    rag_tools = await get_stdio_rag_tools()
+    tools = file_tools + terminal_tools + rag_tools
+    # 方案二：提供一个rag的工具，让智能体通过工具查询知识
 
     prompt = PromptTemplate.from_template(template="""
 # 角色
 你是一名优秀的工程师，你的名字叫做{name}
-
-# 规范
-## 使用终端工具执行shell命令的步骤
-- 步骤1:调用*关闭终端*工具 close_terminal 关闭所有终端
-- 步骤2:打开一个新的终端，调用*打开终端*工具 open_terminal 打开一个新的终端
-- 步骤3:向终端输入命令，调用*运行终端脚本工具* run_script_in_terminal
-- 步骤4:查看终端命令执行结构，调用*获取终端文本工具* get_terminal_full_text
 """)
 
     agent = create_react_agent(
@@ -54,7 +52,7 @@ async def run_agent():
         prompt=SystemMessage(content=prompt.format(name="Bot")),
     )
 
-    config = RunnableConfig(configurable={"thread_id":10})
+    config = RunnableConfig(configurable={"thread_id":10, "recursion_limit": 100,})
 
     while True:
         user_input = input("用户：")
@@ -68,11 +66,30 @@ async def run_agent():
         start_time = time.time()
         last_tool_time = start_time
 
-        # 从RAG知识库中读取知识，并拼接到知识库中
+        # 方案一： 直接从百炼知识库中读取知识，并拼接到提示词中
+#         rag = query_rag_from_bailian(user_input)
+#
+#         prompt = \
+# f"""
+# # 相关知识
+# {rag}
+#
+# # 用户问题
+# {user_input}
+# """
+        # 把该rag知识库封装成工具，供agent调用
+        user_prompt = \
+f"""
+# 要求
+执行任务之前先使用 query_rag 工具查询知识库，根据知识库中的知识执行任务
+
+# 用户问题
+{user_input}
+"""
 
 
         # res = await agent.ainvoke(input={"messages": user_input}, config=config)
-        async for chunk in agent.astream(input={"messages": user_input}, config=config):
+        async for chunk in agent.astream(input={"messages": user_prompt}, config=config):
             iteration_count += 1
 
             print(f"📉 第 {iteration_count} 步执行：")
