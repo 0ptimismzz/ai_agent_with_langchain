@@ -52,7 +52,7 @@ async def run_agent():
         prompt=SystemMessage(content=prompt.format(name="Bot")),
     )
 
-    config = RunnableConfig(configurable={"thread_id":10, "recursion_limit": 100,})
+    config = RunnableConfig(configurable={"thread_id":10}, recursion_limit=100)
 
     while True:
         user_input = input("用户：")
