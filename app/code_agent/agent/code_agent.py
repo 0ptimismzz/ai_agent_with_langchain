@@ -36,6 +36,7 @@ async def run_agent():
     # shell_tools = await get_stdio_shell_tools()
     terminal_tools = await get_stdio_terminal_tools()
     rag_tools = await get_stdio_rag_tools()
+    # rag_self_tools = await get_stdio_self_rag_tools()
     tools = file_tools + terminal_tools + rag_tools
     # 方案二：提供一个rag的工具，让智能体通过工具查询知识
 

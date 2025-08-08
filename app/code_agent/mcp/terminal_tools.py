@@ -204,7 +204,7 @@ end tell
         return output
 
 if __name__ == "__main__":
-    send_terminal_keyboard_key(["up", "return"])
-    # mcp.run(transport="stdio")
+    # send_terminal_keyboard_key(["up", "return"])
+    mcp.run(transport="stdio")
 
 
