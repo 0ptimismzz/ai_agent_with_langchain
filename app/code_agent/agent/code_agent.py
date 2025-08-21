@@ -9,6 +9,7 @@ from langgraph.prebuilt import create_react_agent
 # from app.code_agent.model.config import WORKSPACE_ID, INDEX_ID
 from app.code_agent.model.qwen import llm_qwen
 from app.code_agent.rag.rag import create_client, retrieve_index, query_rag_from_bailian
+from app.code_agent.tools.browser_tools import get_stdio_browser_tools
 from app.code_agent.tools.file_saver import FileSaver
 from app.code_agent.tools.file_tools import file_tools
 from app.code_agent.tools.rag_tools import get_stdio_rag_tools
@@ -36,8 +37,9 @@ async def run_agent():
     # shell_tools = await get_stdio_shell_tools()
     terminal_tools = await get_stdio_terminal_tools()
     rag_tools = await get_stdio_rag_tools()
+    browser_tools = await get_stdio_browser_tools()
     # rag_self_tools = await get_stdio_self_rag_tools()
-    tools = file_tools + terminal_tools + rag_tools
+    tools = file_tools + terminal_tools + browser_tools
     # 方案二：提供一个rag的工具，让智能体通过工具查询知识
 
     prompt = PromptTemplate.from_template(template="""
